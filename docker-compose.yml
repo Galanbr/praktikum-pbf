@@ -1,0 +1,48 @@
+services:
+  backend_su:
+    build:
+      context: ./backend
+      dockerfile: ../Dockerfile.backend
+    container_name: backend_su
+    ports:
+      - "8080:8000"
+    volumes:
+      - ./backend:/var/www/html
+    networks:
+      - app-network
+
+  frontend_laravel_su:
+    build:
+      context: ./frontend
+      dockerfile: ../Dockerfile.frontend
+    container_name: frontend_laravel_su
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./frontend:/var/www/html
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8
+    container_name: mysql_container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: kelompok_4
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./kelompok_4.sql:/docker-entrypoint-initdb.d/kelompok_4.sql
+    networks:
+      - app-network
+
+volumes:
+  mysql_data:
+
+networks:
+  app-network:
+    driver: bridge
